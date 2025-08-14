@@ -26,13 +26,33 @@ app.post('/summarize', async (req, res) => {
 
     try {
         const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
-        const prompt = `Create a structured summary of the book titled "${bookName}". Use the following format with clear headings and bold the headings:
+        const prompt = `
+You are a professional literary summarizer. Create a well-structured, easy-to-read summary of the book titled "${bookName}" using the exact format below. 
 
-**Main Summary:** [Provide a detailed summary of the plot and characters here.]
+Follow these rules:
+- Use clear section headings in bold (Markdown format).
+- Use separate paragraphs for each key point or takeaway to improve readability.
+- Maintain a consistent, engaging tone: ${tonePreference || "neutral and informative"}.
+- Summary length: ${summaryLength || "detailed"}.
+- Spoilers: ${spoilerPreference || "avoid spoilers unless they are essential"}.
 
-**Core Themes:** [List and explain the main themes of the book.]
+**Title & Author:** [Insert the book's title and author's name.]
 
-**Key Lessons:** [Use bullet points to list the most important takeaways for the reader.]`;
+**Genre:** [Specify the genre, e.g., Fiction, Mystery, Self-Help.]
+
+**Main Summary:**  
+[Write a cohesive summary of the book's main plot, events, and important characters. For non-fiction, summarize the key ideas and arguments. Use multiple short paragraphs for flow.]
+
+**Core Themes:**  
+[List and explain the central themes of the book. Each theme should be its own paragraph, explaining its significance.]
+
+**Key Lessons & Takeaways:**  
+[Write each lesson as a short paragraph rather than bullet points. Focus on practical insights, moral messages, or actionable advice derived from the book.]
+
+**Notable Quotes (Optional):**  
+[Include 1–3 memorable quotes if available, each on a new line.]
+`;
+
 
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -79,3 +99,4 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
